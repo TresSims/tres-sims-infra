@@ -1,0 +1,58 @@
+---
+name: Flux Build and push
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+  packages: write
+  id-token: write
+
+env:
+  OCI_REPO: "oci://ghcr.io/tressims/manifests/tres-sims"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v5
+      - name: Version
+        id: semver
+        uses: ietf-tools/semver-action@v1
+        with:
+          token: ${{ github.token }}
+          branch: main
+          fallbackTag: 0.0.0
+          scopeList: manifests
+      - name: Setup Flux CLI
+        uses: fluxcd/flux2/action@main
+      - name: Install Cosign
+        uses: sigstore/cosign-installer@main
+      - name: Login to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Build, Push and Sign
+        run: |
+          flux_output=$(flux push artifact \
+          $OCI_REPO:$(git rev-parse --short HEAD) \
+          --path="./manifests" \
+          --source="$(git config --get remote.origin.url)" \
+          --revision="$(git branch --show-current)@sha1:$(git rev-parse HEAD)" \
+          --output=json \
+          --debug)
+          echo $flux_output
+          digest_url=$(echo $flux_output | jq -r '. | .repository + "@" + .digest')
+
+          cosign sign --yes $digest_url
+      - name: Tag Manifests
+        run: |
+          flux tag artifact \
+          $OCI_REPO:$(git rev-parse --short HEAD) \
+          --creds flux:${{ secrets.GITHUB_TOKEN }} \
+          --tag {{ steps.semver.outputs.next }}
