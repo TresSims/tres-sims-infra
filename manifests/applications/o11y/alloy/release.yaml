@@ -9,7 +9,7 @@ spec:
   chart:
     spec:
       chart: alloy
-      version: '1.6.0'
+      version: "1.6.0"
       sourceRef:
         kind: HelmRepository
         name: grafana-helm
@@ -23,8 +23,8 @@ spec:
         name: alloy-config
         key: config.alloy
 
-      # -- Path to where Grafana Alloy stores data (for example, the Write-Ahead Log).
-      # By default, data is lost between reboots.
+      # -- Path to where Grafana Alloy stores data
+      # (for example, the Write-Ahead Log).
       storagePath: /tmp/alloy
 
       # -- Enables Grafana Alloy container's http server port.
@@ -37,7 +37,8 @@ spec:
       # -- Port to listen for traffic on.
       listenPort: 12345
 
-      # -- Scheme is needed for readiness probes. If enabling tls in your configs, set to "HTTPS"
+      # -- Scheme is needed for readiness probes.
+      # If enabling tls in your configs, set to "HTTPS"
       listenScheme: HTTP
 
       # -- Initial delay for readiness probe.
@@ -49,17 +50,18 @@ spec:
       # --  Base path where the UI is exposed.
       uiPathPrefix: /
 
-      # -- Enables sending Grafana Labs anonymous usage stats to help improve Grafana
-      # Alloy.
+      # -- Enables sending Grafana Labs anonymous usage stats
       enableReporting: false
 
       # -- Extra environment variables to pass to the Alloy container.
       extraEnv: []
 
-      # -- Maps all the keys on a ConfigMap or Secret as environment variables. https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.24/#envfromsource-v1-core
+      # -- Maps all the keys on a ConfigMap or Secret as environment variables.
+      # https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.24/#envfromsource-v1-core
       envFrom: []
 
-      # -- Extra args to pass to `alloy run`: https://grafana.com/docs/alloy/latest/reference/cli/run/
+      # -- Extra args to pass to `alloy run`:
+      # https://grafana.com/docs/alloy/latest/reference/cli/run/
       extraArgs: []
 
       # -- Extra ports to expose on the Alloy container.
@@ -87,8 +89,8 @@ spec:
       registry: "docker.io"
       # -- Grafana Alloy image repository.
       repository: grafana/alloy
-      # -- (string) Grafana Alloy image tag. When empty, the Chart's appVersion is
-      # used.
+      # -- (string) Grafana Alloy image tag.
+      # When empty, the Chart's appVersion is used.
       tag: null
       pullPolicy: IfNotPresent
 
@@ -99,7 +101,8 @@ spec:
       rules:
         # -- Rules required for the `discovery.kubernetes` component.
         - apiGroups: ["", "discovery.k8s.io", "networking.k8s.io"]
-          resources: ["endpoints", "endpointslices", "ingresses", "pods", "services"]
+          resources:
+            ["endpoints", "endpointslices", "ingresses", "pods", "services"]
           verbs: ["get", "list", "watch"]
         # -- Rules required for the `loki.source.kubernetes` component.
         - apiGroups: [""]
@@ -119,7 +122,8 @@ spec:
           verbs: ["get", "list", "watch"]
         # -- Rules required for the `prometheus.operator.*` components.
         - apiGroups: ["monitoring.coreos.com"]
-          resources: ["podmonitors", "servicemonitors", "probes", "scrapeconfigs"]
+          resources:
+            ["podmonitors", "servicemonitors", "probes", "scrapeconfigs"]
           verbs: ["get", "list", "watch"]
         # -- Rules required for the `loki.source.kubernetes_events` component.
         - apiGroups: [""]
@@ -136,7 +140,7 @@ spec:
 
       # -- The rules to create for the ClusterRole objects.
       clusterRules:
-        # -- Rules required for the Nodes role in the `discovery.kubernetes` component.
+        # -- Rules required for the Nodes role for `discovery.kubernetes`
         - apiGroups: [""]
           resources: ["nodes"]
           verbs: ["get", "list", "watch"]
@@ -144,7 +148,7 @@ spec:
         - apiGroups: [""]
           resources: ["nodes/pods"]
           verbs: ["get", "list", "watch"]
-        # -- Rules required accessing metric endpoints on the Node (e.g. Kubelet, cAdvisor, etc...).
+        # -- Rules required accessing metric endpoints on the Node
         - apiGroups: [""]
           resources: ["nodes/metrics"]
           verbs: ["get", "list", "watch"]
@@ -167,11 +171,13 @@ spec:
         repository: prometheus-operator/prometheus-config-reloader
         # -- Tag of image to use for config reloading.
         tag: v0.81.0
-        # -- SHA256 digest of image to use for config reloading (either in format "sha256:XYZ" or "XYZ"). When set, will override `configReloader.image.tag`
+        # -- SHA256 digest of image to use for config reloading
+        # either in format "sha256:XYZ" or "XYZ".
+        # When set, will override `configReloader.image.tag`
         digest: ""
       # -- Override the args passed to the container.
       customArgs: []
-      # -- Resource requests and limits to apply to the config reloader container.
+      # -- Resource requests and limits to apply to the config reloader.
       resources:
         requests:
           cpu: "10m"
@@ -180,19 +186,21 @@ spec:
       securityContext: {}
 
     controller:
-      type: 'daemonset'
+      type: "daemonset"
       extraLabels: {}
       extraAnnotations: {}
       # -- How many additional seconds to wait before considering a pod ready.
       minReadySeconds: 10
 
-      # -- Configures Pods to use the host network. When set to true, the ports that will be used must be specified.
+      # -- Configures Pods to use the host network.
+      # When set to true, the ports that will be used must be specified.
       hostNetwork: false
 
       # -- Configures Pods to use the host PID namespace.
       hostPID: false
 
-      # -- Configures the DNS policy for the pod. https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/#pod-s-dns-policy
+      # -- Configures the DNS policy for the pod.
+      # https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/#pod-s-dns-policy
       dnsPolicy: ClusterFirst
 
       # -- Termination grace period in seconds for the Grafana Alloy pods.
@@ -212,7 +220,7 @@ spec:
       topologySpreadConstraints: []
 
       # -- priorityClassName to apply to Grafana Alloy pods.
-      priorityClassName: ''
+      priorityClassName: ""
 
       # -- Extra pod annotations to add.
       podAnnotations: {}
@@ -231,7 +239,7 @@ spec:
         # Note: Only one of minAvailable or maxUnavailable should be set.
         maxUnavailable: null
 
-      # -- Whether to enable automatic deletion of stale PVCs due to a scale down operation, when controller.type is 'statefulset'.
+      # -- Whether to enable automatic deletion of stale PVCs.
       enableStatefulSetAutoDeletePVC: false
 
       # -- Affinity configuration for pods.
@@ -245,11 +253,11 @@ spec:
       volumeClaimTemplates: []
 
       ## -- Additional init containers to run.
-      ## ref: https://kubernetes.io/docs/concepts/workloads/pods/init-containers/
-      ##
+      ## ref: https://kubernetes.io/docs/concepts/workloads/pods/init-containers
       initContainers: []
 
-      # -- Additional containers to run alongside the Alloy container and initContainers.
+      # -- Additional containers to run alongside
+      # the Alloy container and initContainers.
       extraContainers: []
 
     service:
@@ -257,7 +265,6 @@ spec:
       type: ClusterIP
       internalTrafficPolicy: Cluster
       annotations: {}
-        # cloud.google.com/load-balancer-type: Internal
 
     ingress:
       enabled: true
@@ -273,16 +280,9 @@ spec:
         - alloy.k8s.deep-thonk.com
       extraPaths: []
 
-      tls: 
+      tls:
         - secretName: alloy-tls
           hosts:
             - alloy.k8s.deep-thonk.com
 
     extraObjects: []
-    # - apiVersion: v1
-    #   kind: Secret
-    #   metadata:
-    #     name: grafana-cloud
-    #   stringData:
-    #     PROMETHEUS_HOST: 'https://prometheus-us-central1.grafana.net/api/prom/push'
-    #     PROMETHEUS_USERNAME: '123456'

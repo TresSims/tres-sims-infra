@@ -1,9 +1,11 @@
 ---
 name: Flux Build and push
-on:
+on: # yamllint disable-line rule:truthy
   push:
     branches:
       - main
+    paths:
+      - "manifests/**"
 
 permissions:
   contents: read
@@ -47,7 +49,8 @@ jobs:
           --output=json \
           --debug)
           echo $flux_output
-          digest_url=$(echo $flux_output | jq -r '. | .repository + "@" + .digest')
+          digest_url=$(echo $flux_output | \
+          jq -r '. | .repository + "@" + .digest')
 
           cosign sign --yes $digest_url
       - name: Tag Manifests
