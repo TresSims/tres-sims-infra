@@ -55,4 +55,4 @@ jobs:
           flux tag artifact \
           $OCI_REPO:$(git rev-parse --short HEAD) \
           --creds flux:${{ secrets.GITHUB_TOKEN }} \
-          --tag {{ steps.semver.outputs.next }}
+          --tag ${{ steps.semver.outputs.next }}
