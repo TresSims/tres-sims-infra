@@ -59,3 +59,13 @@ jobs:
           $OCI_REPO:$(git rev-parse --short HEAD) \
           --creds flux:${{ secrets.GITHUB_TOKEN }} \
           --tag ${{ steps.semver.outputs.next }}
+      - name: Push Tag
+        uses: actions/github-script@v5
+        with:
+          script: |
+            github.rest.git.createRef({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              ref: 'refs/tags/${{ steps.semver.outputs.next }}'
+              sha: context.sha
+            })
