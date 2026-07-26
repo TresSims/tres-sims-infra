@@ -29,3 +29,14 @@ spec:
             path: /spec/ref
             value:
               semver: ">=0.1.0"
+      - target:
+          kind: OCIRepository
+          name: flux-sync
+        patch: |
+          - op: add
+            path: /spec/verify
+            value:
+              provider: cosign
+              matchOIDCIdentity:
+                - issuer: "^https://token.actions.githubusercontent.com$"
+                  subject: "^https://github.com/TresSims/tres-sims-infra.*$"
