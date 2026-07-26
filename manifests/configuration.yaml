@@ -8,7 +8,7 @@ spec:
   interval: 1m
   sourceRef:
     kind: OCIRepository
-    name: flux-system
+    name: flux-sync
   path: "./configuration"
   prune: true
   timeout: 1m
