@@ -16,6 +16,8 @@ spec:
         namespace: kube-system
       interval: 10m
   values:
+    operator:
+      replicas: 1
     ipam:
       mode: kubernetes
     kubeProxyReplacement: true
