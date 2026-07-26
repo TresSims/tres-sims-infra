@@ -15,6 +15,17 @@ spec:
     - notification-controller
   sync:
     kind: OCIRepository
+    name: flux-sync
     url: oci://ghcr.io/tressims/tres-sims-flux
-    ref: latest
-    path: .
+    ref: v0.1.0
+    path: ./manifests
+  kustomize:
+    patches:
+      - target:
+          kind: OCIRepository
+          name: flux-sync
+        patch: |
+          - op: replace
+            path: /spec/ref
+            value:
+              semver: ">=0.1.0"
