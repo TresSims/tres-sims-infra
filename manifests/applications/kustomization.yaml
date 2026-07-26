@@ -5,4 +5,4 @@ resources:
   - o11y
   - node-exporter
   - metrics-server
-  - technitium
+  - cadvisor
