@@ -27,12 +27,9 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Checkout Code
         uses: actions/checkout@v5
-      - uses: docker://ghcr.io/yannh/kubeconform:master
+      - uses: docker://ghcr.io/yannh/kubeconform:v0.8.0
         with:
           entrypoint: "/kubeconform"
           # yamllint disable rule:line-length
-          args: |
-            -shcema-location default \
-            -schema-location https://raw.githubusercontent.com/datreeio/CRDs-catalog/main/{{.Group}}/{{.ResourceKind}}_{{.ResourceAPIVersion}}.json \
-            -summary -output json manifests/
+          args: -schema-location default -schema-location https://raw.githubusercontent.com/datreeio/CRDs-catalog/main/{{.Group}}/{{.ResourceKind}}_{{.ResourceAPIVersion}}.json -skip kustomize.config.k8s.io/v1beta1/Kustomization -summary -output json manifests/
           # yamllint enable rule:line-length
