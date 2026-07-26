@@ -1,14 +1,21 @@
 ---
-name: Flux Lint
+name: Lint Yaml
 on: # yamllint disable-line rule:truthy
   push:
-    paths:
-      - "manifests/**"
   pull_request:
-    paths:
-      - "manifests/**"
 
 jobs:
+  yamllint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v5
+
+      - name: Install yamllint
+        run: pip install yamllint
+
+      - name: Lint YAML files
+        run: yamllint .
   kubeconform:
     runs-on: ubuntu-latest
     steps:
@@ -28,3 +35,4 @@ jobs:
             -shcema-location default \
             -schema-location https://raw.githubusercontent.com/datreeio/CRDs-catalog/main/{{.Group}}/{{.ResourceKind}}_{{.ResourceAPIVersion}}.json \
             -summary -output json manifests/
+          # yamllint enable rule:line-length
