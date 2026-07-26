@@ -16,5 +16,6 @@ spec:
   sync:
     kind: OCIRepository
     url: oci://ghcr.io/tressims/tres-sims-flux
-    ref: latest
-    path: .
+    ref:
+      semver: ">= 0.0.0"
+    path: ./manifests
