@@ -265,24 +265,3 @@ spec:
       type: ClusterIP
       internalTrafficPolicy: Cluster
       annotations: {}
-
-    ingress:
-      enabled: true
-      annotations:
-        cert-manager.io/cluster-issuer: "letsencrypt-prod"
-      labels: {}
-      path: /
-      faroPort: 12347
-
-      pathType: Prefix
-
-      hosts:
-        - alloy.k8s.deep-thonk.com
-      extraPaths: []
-
-      tls:
-        - secretName: alloy-tls
-          hosts:
-            - alloy.k8s.deep-thonk.com
-
-    extraObjects: []
