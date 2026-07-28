@@ -4,4 +4,3 @@ kind: Kustomization
 resources:
   - o11y
   - node-exporter
-  - cadvisor
