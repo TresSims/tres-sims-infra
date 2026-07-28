@@ -5,3 +5,4 @@ resources:
   - source.yaml
   - namespace.yaml
   - alloy
+  - secretstore.yaml
