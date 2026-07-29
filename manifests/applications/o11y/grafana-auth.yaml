@@ -1,0 +1,41 @@
+---
+apiVersion: external-secrets.io/v1
+kind: ExternalSecret
+metadata:
+  name: grafana-auth
+  namespace: o11y
+spec:
+  refreshInterval: 1m0s
+  secretStoreRef:
+    name: infisical
+    namespace: o11y
+  target:
+    name: grafana-auth
+    template:
+      type: Opaque
+      data:
+        prometheus_endpoint: "{{.prometheus_endpoint}}"
+        prometheus_token: "{{.prometheus_token}}"
+        prometheus_user: "{{.prometheus_user}}"
+        loki_endpoint: "{{.loki_endpoint}}"
+        loki_token: "{{.loki_token}}"
+        loki_user: "{{.loki_user}}"
+    data:
+      - secretKey: prometheus_endpoint
+        remoteRef:
+          key: /o11y/prometheus_endpoint
+      - secretKey: prometheus_key
+        remoteRef:
+          key: /o11y/prometheus_key
+      - secretKey: prometheus_user
+        remoteRef:
+          key: /o11y/prometheus_user
+      - secretKey: loki_endpoint
+        remoteRef:
+          key: /o11y/loki_endpoint
+      - secretKey: loki_key
+        remoteRef:
+          key: /o11y/loki_key
+      - secretKey: loki_user
+        remoteRef:
+          key: /o11y/loki_user
