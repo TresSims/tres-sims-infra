@@ -106,7 +106,9 @@ loki.process "pod_logs" {
 
 loki.write "k8s" {
   endpoint {
-    url = nonsensitive(remote.kubernetes.secret.grafana_auth.data["loki_endpoint"])
+    // loki_endpoint is the base URL (https://logs-prod-036.grafana.net),
+    // so the push path is appended here.
+    url = nonsensitive(remote.kubernetes.secret.grafana_auth.data["loki_endpoint"]) + "/loki/api/v1/push"
 
     basic_auth {
       username = nonsensitive(remote.kubernetes.secret.grafana_auth.data["loki_user"])
@@ -293,7 +295,10 @@ prometheus.scrape "apiserver" {
 
 prometheus.remote_write "vmetrics" {
   endpoint {
-    url = nonsensitive(remote.kubernetes.secret.grafana_auth.data["prometheus_endpoint"])
+    // prometheus_endpoint already includes /api/prom
+    // (https://prometheus-prod-56-prod-us-east-2.grafana.net/api/prom),
+    // so only the push path is appended here.
+    url = nonsensitive(remote.kubernetes.secret.grafana_auth.data["prometheus_endpoint"]) + "/push"
 
     basic_auth {
       username = nonsensitive(remote.kubernetes.secret.grafana_auth.data["prometheus_user"])
