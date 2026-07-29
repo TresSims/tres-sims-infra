@@ -8,7 +8,6 @@ spec:
   refreshInterval: 1m0s
   secretStoreRef:
     name: infisical
-    namespace: o11y
   target:
     name: grafana-auth
     template:
