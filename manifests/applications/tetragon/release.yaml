@@ -13,6 +13,6 @@ spec:
       sourceRef:
         kind: HelmRepository
         name: tetragon-helm
-        namespace: o11y
+        namespace: tetragon
       interval: 10m
   values:
