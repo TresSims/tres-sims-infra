@@ -16,3 +16,10 @@ spec:
         namespace: tetragon
       interval: 10m
   values:
+    tetragon:
+      prometheus:
+        serviceMonitor:
+          enabled: true
+      prometheusOperator:
+        serviceMonitor:
+          enabled: true
