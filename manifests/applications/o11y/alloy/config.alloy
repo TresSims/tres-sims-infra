@@ -3,6 +3,14 @@ logging {
   format = "logfmt"
 }
 
+// Grafana Cloud connection details, populated by the "grafana-auth"
+// ExternalSecret. Read at runtime so rotated credentials are picked up
+// without a config reload.
+remote.kubernetes.secret "grafana_auth" {
+  namespace = "o11y"
+  name      = "grafana-auth"
+}
+
 discovery.kubernetes "pods" {
   role = "pod"
   selectors {
@@ -94,6 +102,17 @@ loki.process "pod_logs" {
   }
 
   forward_to = [loki.write.k8s.receiver]
+}
+
+loki.write "k8s" {
+  endpoint {
+    url = nonsensitive(remote.kubernetes.secret.grafana_auth.data["loki_endpoint"])
+
+    basic_auth {
+      username = nonsensitive(remote.kubernetes.secret.grafana_auth.data["loki_user"])
+      password = remote.kubernetes.secret.grafana_auth.data["loki_token"]
+    }
+  }
 }
 
 
@@ -270,4 +289,15 @@ prometheus.scrape "apiserver" {
   }
 
   scrape_interval = "30s"
+}
+
+prometheus.remote_write "vmetrics" {
+  endpoint {
+    url = nonsensitive(remote.kubernetes.secret.grafana_auth.data["prometheus_endpoint"])
+
+    basic_auth {
+      username = nonsensitive(remote.kubernetes.secret.grafana_auth.data["prometheus_user"])
+      password = remote.kubernetes.secret.grafana_auth.data["prometheus_token"]
+    }
+  }
 }
