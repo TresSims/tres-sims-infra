@@ -225,13 +225,13 @@ discovery.relabel "services" {
 // Scrape pods
 prometheus.scrape "pods" {
   targets    = discovery.relabel.pods.output
-  forward_to = [prometheus.remote_write.vmetrics.receiver]
+  forward_to = [prometheus.remote_write.prometheus.receiver]
 }
 
 // Scrape services
 prometheus.scrape "services" {
   targets    = discovery.relabel.services.output
-  forward_to = [prometheus.remote_write.vmetrics.receiver]
+  forward_to = [prometheus.remote_write.prometheus.receiver]
 }
 
 // kubernetes metrics
@@ -281,7 +281,7 @@ discovery.relabel "apiserver" {
 
 prometheus.scrape "apiserver" {
   targets    = discovery.relabel.apiserver.output
-  forward_to = [prometheus.remote_write.vmetrics.receiver]
+  forward_to = [prometheus.remote_write.prometheus.receiver]
 
   scheme                 = "https"
   bearer_token_file      = "/var/run/secrets/kubernetes.io/serviceaccount/token"
@@ -293,7 +293,7 @@ prometheus.scrape "apiserver" {
   scrape_interval = "30s"
 }
 
-prometheus.remote_write "vmetrics" {
+prometheus.remote_write "prometheus" {
   endpoint {
     // prometheus_endpoint already includes /api/prom
     // (https://prometheus-prod-56-prod-us-east-2.grafana.net/api/prom),
