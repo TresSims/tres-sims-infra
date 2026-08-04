@@ -1,0 +1,9 @@
+apiVersion: v1
+data:
+  clientId: NjQ3YjVkZTEtODk2Yy00Y2U4LWFiYWItYThhMmY0Yjg3MzMx
+  clientSecret: M2U2MTE0NDY0NjU4OGUyY2E3N2VhODFhM2NhMGEwNmM5ZjA5MTI5Y2I4M2E2MDRmMTc2MmQwNDAwNjA1YWRhNw==
+kind: Secret
+metadata:
+  name: universal-auth-credentials
+  namespace: tailscale
+type: Opaque
