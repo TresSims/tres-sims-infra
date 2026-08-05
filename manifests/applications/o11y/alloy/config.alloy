@@ -3,14 +3,6 @@ logging {
   format = "logfmt"
 }
 
-// Grafana Cloud connection details, populated by the "grafana-auth"
-// ExternalSecret. Read at runtime so rotated credentials are picked up
-// without a config reload.
-remote.kubernetes.secret "grafana_auth" {
-  namespace = "o11y"
-  name      = "grafana-auth"
-}
-
 discovery.kubernetes "pods" {
   role = "pod"
   selectors {
@@ -101,20 +93,7 @@ loki.process "pod_logs" {
       }
   }
 
-  forward_to = [loki.write.k8s.receiver]
-}
-
-loki.write "k8s" {
-  endpoint {
-    // loki_endpoint is the base URL (https://logs-prod-036.grafana.net),
-    // so the push path is appended here.
-    url = nonsensitive(remote.kubernetes.secret.grafana_auth.data["loki_endpoint"]) + "/loki/api/v1/push"
-
-    basic_auth {
-      username = nonsensitive(remote.kubernetes.secret.grafana_auth.data["loki_user"])
-      password = remote.kubernetes.secret.grafana_auth.data["loki_token"]
-    }
-  }
+  forward_to = [otelcol.receiver.loki.deep_thonk.receiver]
 }
 
 
@@ -293,7 +272,9 @@ prometheus.scrape "apiserver" {
   scrape_interval = "30s"
 }
 
-// Scraped metrics are shipped to the Alloy gateway in the k8s.deep-thonk
+// Export
+
+// Metrics and logs are both shipped to the Alloy gateway in the k8s.deep-thonk
 // cluster, which only speaks OTLP, so they are converted on the way out.
 otelcol.receiver.prometheus "deep_thonk" {
   output {
@@ -301,16 +282,27 @@ otelcol.receiver.prometheus "deep_thonk" {
   }
 }
 
+// Every Loki label - including the "cluster" static label - is carried over as
+// an attribute plus a "loki.attribute.labels" hint, which the gateway reads to
+// promote them back to labels on the receiving end.
+otelcol.receiver.loki "deep_thonk" {
+  output {
+    logs = [otelcol.processor.batch.deep_thonk.input]
+  }
+}
+
 otelcol.processor.batch "deep_thonk" {
   output {
     metrics = [otelcol.exporter.otlphttp.deep_thonk.input]
+    logs    = [otelcol.exporter.otlphttp.deep_thonk.input]
   }
 }
 
 otelcol.exporter.otlphttp "deep_thonk" {
   client {
     // The tailscale operator points this Service at an egress proxy for
-    // alloy.taile812.ts.net; "/v1/metrics" is appended by the component.
+    // alloy.taile812.ts.net; "/v1/metrics" and "/v1/logs" are appended by the
+    // component.
     endpoint = "https://alloy-deep-thonk.o11y.svc.cluster.local"
 
     tls {

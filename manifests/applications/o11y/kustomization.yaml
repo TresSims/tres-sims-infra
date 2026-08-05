@@ -6,4 +6,3 @@ resources:
   - namespace.yaml
   - alloy
   - secretstore.yaml
-  - grafana-auth.yaml
