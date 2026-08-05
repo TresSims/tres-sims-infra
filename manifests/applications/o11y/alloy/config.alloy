@@ -97,7 +97,7 @@ loki.source.kubernetes "pod_logs" {
 loki.process "pod_logs" {
   stage.static_labels {
       values = {
-        cluster = "k8s.deep-thonk",
+        cluster = "tres-sims-com",
       }
   }
 
@@ -125,7 +125,7 @@ discovery.relabel "pods" {
 
   rule {
     action = "replace"
-    replacement = "k8s.deep-thonk"
+    replacement = "tres-sims-com"
     target_label = "cluster"
   }
 
@@ -176,7 +176,7 @@ discovery.relabel "services" {
 
   rule {
     action = "replace"
-    replacement = "k8s.deep-thonk"
+    replacement = "tres-sims-com"
     target_label = "cluster"
   }
 
@@ -225,13 +225,13 @@ discovery.relabel "services" {
 // Scrape pods
 prometheus.scrape "pods" {
   targets    = discovery.relabel.pods.output
-  forward_to = [prometheus.remote_write.prometheus.receiver]
+  forward_to = [otelcol.receiver.prometheus.deep_thonk.receiver]
 }
 
 // Scrape services
 prometheus.scrape "services" {
   targets    = discovery.relabel.services.output
-  forward_to = [prometheus.remote_write.prometheus.receiver]
+  forward_to = [otelcol.receiver.prometheus.deep_thonk.receiver]
 }
 
 // kubernetes metrics
@@ -274,14 +274,14 @@ discovery.relabel "apiserver" {
 
   rule {
     action = "replace"
-    replacement = "k8s.deep-thonk"
+    replacement = "tres-sims-com"
     target_label = "cluster"
   }
 }
 
 prometheus.scrape "apiserver" {
   targets    = discovery.relabel.apiserver.output
-  forward_to = [prometheus.remote_write.prometheus.receiver]
+  forward_to = [otelcol.receiver.prometheus.deep_thonk.receiver]
 
   scheme                 = "https"
   bearer_token_file      = "/var/run/secrets/kubernetes.io/serviceaccount/token"
@@ -293,16 +293,31 @@ prometheus.scrape "apiserver" {
   scrape_interval = "30s"
 }
 
-prometheus.remote_write "prometheus" {
-  endpoint {
-    // prometheus_endpoint already includes /api/prom
-    // (https://prometheus-prod-56-prod-us-east-2.grafana.net/api/prom),
-    // so only the push path is appended here.
-    url = nonsensitive(remote.kubernetes.secret.grafana_auth.data["prometheus_endpoint"]) + "/push"
+// Scraped metrics are shipped to the Alloy gateway in the k8s.deep-thonk
+// cluster, which only speaks OTLP, so they are converted on the way out.
+otelcol.receiver.prometheus "deep_thonk" {
+  output {
+    metrics = [otelcol.processor.batch.deep_thonk.input]
+  }
+}
 
-    basic_auth {
-      username = nonsensitive(remote.kubernetes.secret.grafana_auth.data["prometheus_user"])
-      password = remote.kubernetes.secret.grafana_auth.data["prometheus_token"]
+otelcol.processor.batch "deep_thonk" {
+  output {
+    metrics = [otelcol.exporter.otlphttp.deep_thonk.input]
+  }
+}
+
+otelcol.exporter.otlphttp "deep_thonk" {
+  client {
+    // The tailscale operator points this Service at an egress proxy for
+    // alloy.taile812.ts.net; "/v1/metrics" is appended by the component.
+    endpoint = "https://alloy-deep-thonk.o11y.svc.cluster.local"
+
+    tls {
+      // The ingress serves a Let's Encrypt cert for its MagicDNS name, which
+      // is not the name we dial.
+      server_name                  = "alloy.taile812.ts.net"
+      include_system_ca_certs_pool = true
     }
   }
 }
