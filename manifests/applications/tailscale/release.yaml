@@ -17,6 +17,6 @@ spec:
       interval: 10m
   values:
     operatorConfig:
-      hostname: k8s-deep-thonk
+      hostname: tres-sims-com
     apiServerProxyConfig:
       mode: "true"
