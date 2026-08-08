@@ -7,3 +7,4 @@ resources:
   - external-secrets.yaml
   - source.yaml
   - release.yaml
+  - auth-proxy-rbac.yaml
