@@ -22,4 +22,4 @@ spec:
         key: /foundryvtt/FOUNDRY_LICENSE_KEY
     - secretKey: FOUNDRY_ADMIN_KEY
       remoteRef:
-        key: /foundryvtt/FOUNDRY_LICENSE_KEY
+        key: /foundryvtt/FOUNDRY_ADMIN_KEY
