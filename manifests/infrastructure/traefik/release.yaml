@@ -27,6 +27,14 @@ spec:
     service:
       type: NodePort
     hostNetwork: true
+    securityContext:
+      allowPrivilegeEscalation: false
+      readOnlyRootFilesystem: true
+      capabilities:
+        drop:
+          - ALL
+        add:
+          - NET_BIND_SERVICE
     updateStrategy:
       rollingUpdate:
         maxUnavailable: 1
@@ -36,3 +44,5 @@ spec:
         port: 9200
       websecure:
         port: 443
+      web:
+        port: 80
