@@ -27,4 +27,4 @@ spec:
       tls:
         - host:
             - tabletop.tres-sims.com
-          secretName: foundry.vtt
+          secretName: foundry.tls
