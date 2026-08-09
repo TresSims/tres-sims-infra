@@ -22,6 +22,6 @@ spec:
       annotations:
         cert-manager.io/cluster-issuer: letsencrypt-prod
       tls:
-        - host:
+        - hosts:
             - tabletop.tres-sims.com
           secretName: foundry.tls
