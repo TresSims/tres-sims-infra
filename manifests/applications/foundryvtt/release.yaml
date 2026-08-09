@@ -6,13 +6,10 @@ metadata:
   namespace: foundryvtt
 spec:
   interval: 10m
-  chart:
-    spec:
-      interval: 10m
-      chartRef:
-        kind: OCIRepository
-        name: foundryvtt-helm
-        namespace: foundryvtt
+  chartRef:
+    kind: OCIRepository
+    name: foundryvtt-helm
+    namespace: foundryvtt
   values:
     config:
       domain: tabletop.tres-sims.com
