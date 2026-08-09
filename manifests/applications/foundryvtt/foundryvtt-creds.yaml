@@ -3,7 +3,7 @@ apiVersion: external-secrets.io/v1
 kind: ExternalSecret
 metadata:
   name: foundryvtt-creds
-  namespace: tailscale
+  namespace: foundryvtt
 spec:
   refreshInterval: 1m0s
   secretStoreRef:
