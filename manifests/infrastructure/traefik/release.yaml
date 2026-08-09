@@ -27,3 +27,6 @@ spec:
     service:
       type: NodePort
     hostNetwork: true
+    podDisruptionBudget:
+      enabled: true
+      maxUnavailable: 1
