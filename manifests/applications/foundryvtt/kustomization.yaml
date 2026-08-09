@@ -4,4 +4,4 @@ kind: Kustomization
 resources:
   - secretstore.yaml
   - namespace.yaml
-  - foundry-creds.yaml
+  - foundryvtt-creds.yaml
