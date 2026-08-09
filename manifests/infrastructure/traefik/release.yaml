@@ -23,7 +23,7 @@ spec:
       general:
         level: DEBUG
     deployment:
-      kind: Daemonset
+      kind: DaemonSet
     service:
       type: NodePort
     hostNetwork: true
