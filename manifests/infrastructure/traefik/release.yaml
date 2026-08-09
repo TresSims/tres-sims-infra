@@ -31,3 +31,6 @@ spec:
       rollingUpdate:
         maxUnavailable: 1
         maxSurge: 0
+    ports:
+      metrics:
+        port: 9200
