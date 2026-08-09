@@ -5,3 +5,5 @@ resources:
   - secretstore.yaml
   - namespace.yaml
   - foundryvtt-creds.yaml
+  - source.yaml
+  - release.yaml
