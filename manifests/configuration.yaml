@@ -10,7 +10,12 @@ spec:
     kind: OCIRepository
     name: flux-sync
   path: "./configuration"
-  prune: true
+  prune: false
   timeout: 1m
   dependsOn:
     - name: infrastructure
+  ignore:
+    - paths:
+        - "/spec/replicas"
+      target:
+        kind: Kustomization
