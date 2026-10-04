@@ -16,6 +16,6 @@ spec:
     - name: flux-system
   ignore:
     - paths:
-        - "/spec/replicas"
+        - "/spec/suspend"
       target:
         kind: Kustomization

@@ -16,6 +16,6 @@ spec:
     - name: configuration
   ignore:
     - paths:
-        - "/spec/replicas"
+        - "/spec/suspend"
       target:
         kind: Kustomization

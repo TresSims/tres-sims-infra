@@ -14,6 +14,6 @@ spec:
   timeout: 1m
   ignore:
     - paths:
-        - "/spec/replicas"
+        - "/spec/suspend"
       target:
         kind: Kustomization

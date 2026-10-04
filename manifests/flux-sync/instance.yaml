@@ -22,6 +22,20 @@ spec:
   kustomize:
     patches:
       - target:
+          kind: Kustomization
+          name: flux-sync
+        patch: |
+          - op: replace
+            path: /spec/prune
+            value: false
+          - op: replace
+            path: /spec/ignore
+            value:
+              - paths:
+                  - "/spec/suspend"
+                target:
+                  kind: Kustomization
+      - target:
           kind: OCIRepository
           name: flux-sync
         patch: |
